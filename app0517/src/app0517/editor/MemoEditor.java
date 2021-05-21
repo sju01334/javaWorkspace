@@ -3,9 +3,11 @@ package app0517.editor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
@@ -13,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -28,6 +31,7 @@ public class MemoEditor extends JFrame{
 	JTextArea area;
 	JScrollPane scroll;
 	JFileChooser chooser;//파일 탐색기
+	
 	
 	public MemoEditor() {
 		//생성
@@ -62,7 +66,7 @@ public class MemoEditor extends JFrame{
 		//아래와 같은 이름없는 클래스를 가리켜 내부익명 클래스라 한다
 		//내부익며 클래스의 사용목적? 원래 클래스란 코드의 재사용성을 위한 거푸집이 목적이다
 		//하지만, 클래스 중에는 재사용성이 별로 없는 1회성의 클래스도 있다. 이런 경우 굳이 개발자가 .java 파일을
-		//물리ㅓㅈㄱ으로 정의해가면서까지 개발할 필요가 있는가?? 따라서 sum에서는 클래스안에 이름없는 클래스를 넣을수 있도록
+		//물리적으로 정의해가면서까지 개발할 필요가 있는가?? 따라서 sum에서는 클래스안에 이름없는 클래스를 넣을수 있도록
 		//내부익명 클래스를 지원해주명, 주로 이벤트 구현시 압도적으로 많이 사용된다
 		//또한 내부익명 클래스를 사용하면, 객체가 주소를 전달해야하는 불편함도 해소할 수 있따. 즉 내부익명클래스는 외부클래스의
 		//멤버들을 자기것 처럼 접근 수 있다.
@@ -94,6 +98,7 @@ public class MemoEditor extends JFrame{
 				 * 3) 빈파일을 파일출력스트림으로 생성한다
 				 * 4) 생성된 파일출력스트림을 통해 area의 내용을 파일에 넣는다(출력)
 				 * */
+				saveasFile();
 			}
 		});
 		
@@ -105,6 +110,62 @@ public class MemoEditor extends JFrame{
 
 	}
 	
+	public void saveasFile() {
+		int res=chooser.showSaveDialog(this);
+		
+		if(res==JFileChooser.APPROVE_OPTION) {
+			File file=chooser.getSelectedFile();
+			String title=chooser.getDialogTitle();
+			System.out.println(file);
+			
+			FileReader reader=null;
+			BufferedReader buffr=null;
+			FileWriter writer=null;
+			BufferedWriter wbuffr=null;
+			
+			try {
+				reader=new FileReader(area.getText());
+				System.out.println(reader);
+				buffr=new BufferedReader(reader);
+				writer=new FileWriter(file);
+				wbuffr=new BufferedWriter(writer);
+				
+				String data=null;
+				
+				while(true) {
+					data = buffr.readLine(); //한 문자열 즉 한 줄(케릭터들을 모아서) 읽기
+					if(data==null)break;
+					
+//					wbuffr.write(data);
+					
+					System.out.println("저장완료");
+				}
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}finally {
+				if(buffr!=null) {
+					try {
+						buffr.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if(reader!=null) {
+					try {
+						reader.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			
+			
+		}
+	}
 	//파일 열어서, 편집기창에 출력하기 (불러오기)
 	public void openFile() {
 		int res=chooser.showOpenDialog(this);
